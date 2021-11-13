@@ -37,11 +37,11 @@
             </com.mikhaellopez.circularimageview.CircularImageView>
 
             <TextView
-                android:id="@+id/phoneNumber"
+                android:id="@+id/status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="@string/mobile_number"
+                android:text="@string/status"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/name" />
 
@@ -54,7 +54,7 @@
                 android:text="@string/name"
                 android:textColor="#090909"
                 android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/phoneNumber"
+                app:layout_constraintBottom_toTopOf="@+id/status"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.021"
                 app:layout_constraintStart_toStartOf="@+id/guideline"

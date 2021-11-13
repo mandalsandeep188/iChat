@@ -1,18 +1,21 @@
 package com.example.ichat.Models;
 
+import java.util.List;
+
 public class ChatsModel {
     String chatId;
     String lastMessage;
-    UserModel user;
+    String receiver;
+    List<String> users;
     long lastUpdate;
 
     public ChatsModel() {
     }
 
-    public ChatsModel(String chatId, String lastMessage, UserModel user, long lastUpdate) {
+    public ChatsModel(String chatId, String lastMessage, List<String> users, long lastUpdate) {
         this.chatId = chatId;
         this.lastMessage = lastMessage;
-        this.user = user;
+        this.users = users;
         this.lastUpdate = lastUpdate;
     }
 
@@ -32,12 +35,13 @@ public class ChatsModel {
         this.lastMessage = lastMessage;
     }
 
-    public UserModel getUser() {
-        return user;
+
+    public String getReceiver() {
+        return receiver;
     }
 
-    public void setUser(UserModel user) {
-        this.user = user;
+    public void setReceiver(String receiver) {
+        this.receiver = receiver;
     }
 
     public long getLastUpdate() {
@@ -46,5 +50,13 @@ public class ChatsModel {
 
     public void setLastUpdate(long lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public List<String> getUsers() {
+        return users;
+    }
+
+    public void setUsers(List<String> users) {
+        this.users = users;
     }
 }

@@ -50,6 +50,9 @@ public class ContactsFragment extends Fragment {
         recyclerViewListeners = listeners;
     }
 
+    public ContactsFragment(){
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,

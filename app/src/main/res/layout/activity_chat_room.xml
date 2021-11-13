@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#EEF0FA"
     tools:context=".Activities.ChatRoomActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -55,7 +56,6 @@
         android:scrollbars="vertical"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="2dp"
-        android:background="@color/white"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toTopOf="@+id/messageBox"
         app:layout_constraintEnd_toEndOf="parent"
@@ -74,15 +74,16 @@
         android:hint="@string/type_your_message_here"
         android:importantForAutofill="no"
         android:inputType="textPersonName"
-        android:padding="18dp"
+        android:padding="15dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/send"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/send"
-        android:layout_width="55dp"
-        android:layout_height="55dp"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="5dp"
         android:layout_marginBottom="13dp"

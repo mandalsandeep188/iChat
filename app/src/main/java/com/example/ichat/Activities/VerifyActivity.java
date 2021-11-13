@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,11 +23,11 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import java.util.concurrent.TimeUnit;
 
 public class VerifyActivity extends AppCompatActivity {
-    //    private static final String TAG = "mobile";
     private EditText editText;
     private FirebaseAuth mAuth;
     private String mVerificationId;
     ProgressDialog progressDialog;
+    Button sendCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,7 @@ public class VerifyActivity extends AppCompatActivity {
 
         editText = findViewById(R.id.mobile);
         TextView textView = findViewById(R.id.phone);
+        sendCode = findViewById(R.id.sendCode);
 
         //getting mobile number from the previous activity
         //and sending the verification code to the number
@@ -44,7 +46,8 @@ public class VerifyActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("Signing in");
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Signing in");
 
         findViewById(R.id.submit).setOnClickListener(view -> {
             String code = editText.getText().toString().trim();
@@ -59,10 +62,12 @@ public class VerifyActivity extends AppCompatActivity {
             verifyVerificationCode(code);
         });
 
+        sendCode.setOnClickListener(v-> sendVerificationCode(mobile));
+
         sendVerificationCode(mobile);
     }
 
-    private void sendVerificationCode(String mobile) {
+    public void sendVerificationCode(String mobile) {
         PhoneAuthOptions options =
                 PhoneAuthOptions.newBuilder(mAuth)
                         .setPhoneNumber(mobile)       // Phone number to verify
@@ -119,7 +124,6 @@ public class VerifyActivity extends AppCompatActivity {
                 .addOnCompleteListener(VerifyActivity.this, task -> {
                     progressDialog.dismiss();
                     if(task.isSuccessful()){
-                        //TODO redirect if user exist
                         Intent intent = new Intent(VerifyActivity.this,UserActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);

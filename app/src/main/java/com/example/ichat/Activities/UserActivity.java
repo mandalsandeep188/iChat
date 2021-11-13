@@ -7,12 +7,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.bumptech.glide.Glide;
 import com.example.ichat.Models.UserModel;
 import com.example.ichat.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -49,41 +49,47 @@ public class UserActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         progressDialog = new ProgressDialog(this);
         photo = new ProgressDialog(this);
-        progressDialog.setTitle("Creating your account");
-        photo.setTitle("Getting your image");
+        progressDialog.setMessage("Creating your account");
+        progressDialog.setCancelable(false);
+        photo.setMessage("Getting your image");
 
         addPhoto.setOnClickListener(view -> addProfilePhoto());
         submit.setOnClickListener(view -> submitCredentials());
     }
 
     public void addProfilePhoto() {
-        Intent gallery = new Intent(Intent.ACTION_GET_CONTENT);
-        gallery.setType("image/*");
-        launchSomeActivity.launch(gallery);
+        try {
+            Intent gallery = new Intent(Intent.ACTION_GET_CONTENT);
+            gallery.setType("image/*");
+            launchSomeActivity.launch(gallery);
+        }catch(Exception ignored){
+        }
     }
 
     ActivityResultLauncher<Intent> launchSomeActivity = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
-                photo.show();
-                if (result.getResultCode() == Activity.RESULT_OK) {
-                    Intent data = result.getData();
-                    if (data != null) {
-                        Uri imageURI = data.getData();
-                        profilePhoto.setImageURI(imageURI);
+                try {
+                    photo.show();
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        Intent data = result.getData();
+                        if (data != null) {
+                            Uri imageURI = data.getData();
+                            profilePhoto.setImageURI(imageURI);
 
-                        final StorageReference profileRef = mStorageRef.child("users/" +
-                                Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid() + ".jpg");
+                            final StorageReference profileRef = mStorageRef.child("users/" +
+                                    Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid() + ".jpg");
 
-                        assert imageURI != null;
+                            assert imageURI != null;
 
-                        profileRef.putFile(imageURI)
-                                .addOnSuccessListener(taskSnapshot -> profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                                    assert uri != null;
-                                    photoUri = uri.toString();
-                                    photo.dismiss();
-                                }));
+                            profileRef.putFile(imageURI)
+                                    .addOnSuccessListener(taskSnapshot -> profileRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                                        photoUri = uri.toString();
+                                        photo.dismiss();
+                                    }));
+                        }
                     }
+                }catch (Exception ignored) {
                 }
             });
 
@@ -107,18 +113,26 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-//        db.collection("users").whereEqualTo("userId",
-//                Objects.requireNonNull(firebaseAuth.getCurrentUser()).getUid()).get()
-//                .addOnCompleteListener(task -> {
-//                    if (task.isSuccessful()) {
-//                        if(Objects.requireNonNull(task.getResult()).isEmpty()){
-//                            Intent intent = new Intent(UserActivity.this,MainActivity.class);
-//                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                            startActivity(intent);
-//                        }
-//                    } else {
-//                        Toast.makeText(this, "Error!", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
+        db.collection("users").document(Objects.requireNonNull(firebaseAuth.getUid()))
+                .addSnapshotListener((value, error)->{
+            if(error == null) {
+                assert value != null;
+                UserModel user = value.toObject(UserModel.class);
+                assert user != null;
+                name.setText(user.getName());
+                status.setText(user.getStatus());
+                String uri = user.getPhotoUrl();
+                if (!uri.isEmpty()) {
+                    photoUri = uri;
+                    try {
+                        Glide.with(this)
+                                .load(uri)
+                                .centerCrop()
+                                .into(profilePhoto);
+                    }catch (Exception ignored){
+                    }
+                }
+            }
+        });
     }
 }

@@ -13,6 +13,7 @@ import com.example.ichat.Models.ChatsModel;
 import com.example.ichat.Models.UserModel;
 import com.example.ichat.R;
 import com.example.ichat.RecyclerViewListeners;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
 import java.util.List;
@@ -21,10 +22,12 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
 
     List<ChatsModel> chats;
     RecyclerViewListeners listeners;
+    FirebaseFirestore db;
 
     public ChatsAdapter(List<ChatsModel> chats, RecyclerViewListeners listeners) {
         this.chats = chats;
         this.listeners = listeners;
+        db = FirebaseFirestore.getInstance();
     }
 
     @NonNull
@@ -38,13 +41,26 @@ public class ChatsAdapter extends RecyclerView.Adapter<ChatsAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ChatsModel chat = chats.get(position);
-        holder.name.setText(chat.getUser().getName());
-        holder.lastMessage.setText(chat.getLastMessage());
-        holder.user = chat.getUser();
-        Glide.with(holder.itemView)
-                .load(chat.getUser().getPhotoUrl())
-                .centerCrop()
-                .into(holder.photo);
+        db.collection("users").document(chat.getReceiver())
+                .addSnapshotListener((value, error) -> {
+                    if(error == null){
+                        assert value != null;
+                        UserModel user = value.toObject(UserModel.class);
+                        assert user != null;
+                        holder.name.setText(user.getName());
+                        holder.lastMessage.setText(chat.getLastMessage());
+                        holder.user = user;
+                        if(!user.getPhotoUrl().isEmpty()) {
+                            try {
+                                Glide.with(holder.itemView)
+                                        .load(user.getPhotoUrl())
+                                        .centerCrop()
+                                        .into(holder.photo);
+                            }catch (Exception ignored){
+                            }
+                        }
+                    }
+                });
     }
 
     @Override

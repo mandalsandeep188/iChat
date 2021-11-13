@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -77,7 +76,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewListe
     }
 
     @Override
-    public void invite() {
-        Toast.makeText(this, "invite", Toast.LENGTH_SHORT).show();
+    public void invite(String phoneNumber) {
+        final String LINK = "https://github.com/mandalsandeep188/iChat";
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, "Download iChat: "+LINK);
+        sendIntent.putExtra(Intent.EXTRA_PHONE_NUMBER,phoneNumber);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        startActivity(shareIntent);
     }
 }

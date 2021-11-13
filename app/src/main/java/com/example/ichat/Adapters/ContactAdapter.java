@@ -1,7 +1,5 @@
 package com.example.ichat.Adapters;
 
-// Adapter for Recyclerview need a class of whatever data we want to show in it with constructor and getter setter methods
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,12 +62,17 @@ public class ContactAdapter extends RecyclerView.Adapter {
         else{
             ViewHolder2 viewHolder2 = (ViewHolder2) holder;
             viewHolder2.name.setText(contact.getName());
-            viewHolder2.phoneNumber.setText(contact.getPhoneNumber());
+            viewHolder2.status.setText(contact.getUser().getStatus());
             viewHolder2.user = contact.getUser();
-            Glide.with(viewHolder2.itemView)
-                    .load(contact.getUser().getPhotoUrl())
-                    .centerCrop()
-                    .into(viewHolder2.photo);
+            if(!contact.getUser().getPhotoUrl().isEmpty()) {
+                try {
+                    Glide.with(viewHolder2.itemView)
+                            .load(contact.getUser().getPhotoUrl())
+                            .centerCrop()
+                            .into(viewHolder2.photo);
+                }catch (Exception ignored){
+                }
+            }
         }
     }
 
@@ -88,23 +91,23 @@ public class ContactAdapter extends RecyclerView.Adapter {
             phoneNumber = itemView.findViewById(R.id.phoneNumber);
             button = itemView.findViewById(R.id.invite);
 
-            button.setOnClickListener(view -> listeners.invite());
+            button.setOnClickListener(view -> listeners.invite(phoneNumber.toString()));
         }
     }
 
     class ViewHolder2 extends RecyclerView.ViewHolder{
-        TextView name,phoneNumber;
+        TextView name,status;
         CircularImageView photo;
         UserModel user;
 
         public ViewHolder2(@NonNull View itemView) {
             super(itemView);
             name = itemView.findViewById(R.id.name);
-            phoneNumber = itemView.findViewById(R.id.phoneNumber);
+            status = itemView.findViewById(R.id.status);
             photo = itemView.findViewById(R.id.photo);
 
             itemView.setOnClickListener(view -> listeners.contactOnClick((String) name.
-                    getText(),(String) phoneNumber.getText(),user));
+                    getText(),user.getPhoneNumber(),user));
         }
     }
 }

@@ -28,4 +28,5 @@
     <string name="msg">msg</string>
     <string name="user">Enter your name and status to continue</string>
     <string name="add_profile_photo">Add profile photo</string>
+    <string name="resend_code">Resend Code</string>
 </resources>

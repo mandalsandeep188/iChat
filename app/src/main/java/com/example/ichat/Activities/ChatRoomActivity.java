@@ -18,7 +18,6 @@ import com.bumptech.glide.Glide;
 import com.example.ichat.Adapters.MessageAdapter;
 import com.example.ichat.Models.ChatsModel;
 import com.example.ichat.Models.MessageModel;
-import com.example.ichat.Models.UserModel;
 import com.example.ichat.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -79,10 +78,13 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         displayName.setText(name);
         if (photoUrl.length() > 0) {
-            Glide.with(this)
-                    .load(photoUrl)
-                    .centerCrop()
-                    .into(photo);
+            try {
+                Glide.with(this)
+                        .load(photoUrl)
+                        .centerCrop()
+                        .into(photo);
+            }catch (Exception ignored){
+            }
         }
 
         setMessageListener();
@@ -128,10 +130,10 @@ public class ChatRoomActivity extends AppCompatActivity {
     private void sendMessage(String msg) {
         messageBox.setText("");
 
-        // first message in this chat (check if messages list will work)
+        // first message in this chat
         if(messages.isEmpty()){
-            UserModel user = new UserModel(photoUrl,name,phoneNumber,status,receiver);
-            ChatsModel chat = new ChatsModel(chatID,msg,user,new Date().getTime());
+            List<String> users = Arrays.asList(sender,receiver);
+            ChatsModel chat = new ChatsModel(chatID,msg,users,new Date().getTime());
             db.collection("chats").document(chatID).set(chat)
                     .addOnCompleteListener(t ->
                             Toast.makeText(ChatRoomActivity.this,
