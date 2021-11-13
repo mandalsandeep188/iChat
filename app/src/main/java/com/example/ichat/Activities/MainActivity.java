@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewListe
 
     @Override
     public void invite(String phoneNumber) {
-        final String LINK = "https://github.com/mandalsandeep188/iChat";
+        final String LINK = "https://github.com/mandalsandeep188/iChat#readme";
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
         sendIntent.putExtra(Intent.EXTRA_TEXT, "Download iChat: "+LINK);
