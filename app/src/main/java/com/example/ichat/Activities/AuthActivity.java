@@ -35,7 +35,7 @@ public class AuthActivity extends AppCompatActivity {
                 return;
             }
 
-            // Move to verify activity for OTP
+            // Move to verify activity for OTP verification
             mobile = code + mobile;
             Intent intent = new Intent(AuthActivity.this,VerifyActivity.class );
             intent.putExtra("mobile", mobile);
