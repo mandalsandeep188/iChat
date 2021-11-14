@@ -34,11 +34,13 @@ public class UserActivity extends AppCompatActivity {
     FirebaseAuth firebaseAuth;
     String photoUri = "";
     ProgressDialog progressDialog,photo;
+    String phoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
+        phoneNumber = getIntent().getStringExtra("phoneNumber");
         name = findViewById(R.id.name);
         status = findViewById(R.id.status);
         submit = findViewById(R.id.submit);
@@ -113,26 +115,27 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        db.collection("users").document(Objects.requireNonNull(firebaseAuth.getUid()))
-                .addSnapshotListener((value, error)->{
-            if(error == null) {
-                assert value != null;
-                UserModel user = value.toObject(UserModel.class);
-                assert user != null;
-                name.setText(user.getName());
-                status.setText(user.getStatus());
-                String uri = user.getPhotoUrl();
-                if (!uri.isEmpty()) {
-                    photoUri = uri;
-                    try {
-                        Glide.with(this)
-                                .load(uri)
-                                .centerCrop()
-                                .into(profilePhoto);
-                    }catch (Exception ignored){
+        db.collection("users").whereEqualTo("phoneNumber",phoneNumber)
+                .addSnapshotListener((value, error) -> {
+                    if(error == null) {
+                        assert value != null;
+                        UserModel user = value.getDocuments().get(0).toObject(UserModel.class);
+
+                        assert user != null;
+                        name.setText(user.getName());
+                        status.setText(user.getStatus());
+                        String uri = user.getPhotoUrl();
+                        if (!uri.isEmpty()) {
+                            photoUri = uri;
+                            try {
+                                Glide.with(this)
+                                        .load(uri)
+                                        .centerCrop()
+                                        .into(profilePhoto);
+                            } catch (Exception ignored) {
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
     }
 }

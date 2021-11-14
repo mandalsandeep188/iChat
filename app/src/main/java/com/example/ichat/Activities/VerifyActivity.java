@@ -28,6 +28,7 @@ public class VerifyActivity extends AppCompatActivity {
     private String mVerificationId;
     ProgressDialog progressDialog;
     Button sendCode;
+    String mobile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +42,7 @@ public class VerifyActivity extends AppCompatActivity {
         //getting mobile number from the previous activity
         //and sending the verification code to the number
         Intent intent = getIntent();
-        String mobile = intent.getStringExtra("mobile");
+        mobile = intent.getStringExtra("mobile");
         textView.setText(mobile);
 
         mAuth = FirebaseAuth.getInstance();
@@ -125,6 +126,7 @@ public class VerifyActivity extends AppCompatActivity {
                     progressDialog.dismiss();
                     if(task.isSuccessful()){
                         Intent intent = new Intent(VerifyActivity.this,UserActivity.class);
+                        intent.putExtra("phoneNumber",mobile);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                         startActivity(intent);
                     }
