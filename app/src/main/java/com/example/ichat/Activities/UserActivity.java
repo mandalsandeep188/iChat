@@ -116,6 +116,7 @@ public class UserActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         db.collection("users").whereEqualTo("phoneNumber",phoneNumber)
                 .addSnapshotListener((value, error) -> {
                     if(error == null) {
