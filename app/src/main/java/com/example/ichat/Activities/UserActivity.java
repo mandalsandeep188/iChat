@@ -17,11 +17,13 @@ import com.example.ichat.Models.UserModel;
 import com.example.ichat.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.mikhaellopez.circularimageview.CircularImageView;
 
+import java.util.List;
 import java.util.Objects;
 
 public class UserActivity extends AppCompatActivity {
@@ -119,20 +121,23 @@ public class UserActivity extends AppCompatActivity {
                 .addSnapshotListener((value, error) -> {
                     if(error == null) {
                         assert value != null;
-                        UserModel user = value.getDocuments().get(0).toObject(UserModel.class);
+                        List<DocumentSnapshot> docs = value.getDocuments();
+                        if (docs.size() > 0) {
+                            UserModel user = docs.get(0).toObject(UserModel.class);
 
-                        assert user != null;
-                        name.setText(user.getName());
-                        status.setText(user.getStatus());
-                        String uri = user.getPhotoUrl();
-                        if (!uri.isEmpty()) {
-                            photoUri = uri;
-                            try {
-                                Glide.with(this)
-                                        .load(uri)
-                                        .centerCrop()
-                                        .into(profilePhoto);
-                            } catch (Exception ignored) {
+                            assert user != null;
+                            name.setText(user.getName());
+                            status.setText(user.getStatus());
+                            String uri = user.getPhotoUrl();
+                            if (!uri.isEmpty()) {
+                                photoUri = uri;
+                                try {
+                                    Glide.with(this)
+                                            .load(uri)
+                                            .centerCrop()
+                                            .into(profilePhoto);
+                                } catch (Exception ignored) {
+                                }
                             }
                         }
                     }
